@@ -65,6 +65,10 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7; // assuming duration is in days, dividing by 7 to get weeks
 });
 
+//Document Middleware: runs before .save and . create
+tourSchema.pre('save', function () {
+  console.log(this);
+}); // this middleware is gonna run berfore the actual event
 const Tour = mongoose.model('Tour', tourSchema); // mongoose model to use CRUD operations
 
 module.exports = Tour;
