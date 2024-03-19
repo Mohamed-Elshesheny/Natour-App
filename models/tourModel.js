@@ -67,7 +67,7 @@ tourSchema.virtual('durationWeeks').get(function () {
 
 //Document Middleware: runs before .save and . create
 tourSchema.pre('save', function () {
-  console.log(this);
+  console.log(this); // me
 }); // this middleware is gonna run berfore the actual event
 const Tour = mongoose.model('Tour', tourSchema); // mongoose model to use CRUD operations
 
