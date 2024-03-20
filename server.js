@@ -18,7 +18,10 @@ mongoose
     useFindAndModify: false,
     useUnifiedTopology: true,
   })
-  .then(() => console.log('DB conections is successfully'));
+  .then(() => console.log('DB conections is successfully'))
+  .catch((err) => {
+    console.error('Error connecting to MongoDB:', err.message);
+  });
 
 // server
 const port = 3000;

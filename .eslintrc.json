@@ -18,7 +18,8 @@
     "import/newline-after-import": "off",
     "no-undef": "off",
     "import/no-useless-path-segments": "off",
-    "node/no-unsupported-features/es-syntax": "off"
+    "node/no-unsupported-features/es-syntax": "off",
+    "import/no-extraneous-dependencies": "off"
 
     // let it be like that for now
   }
