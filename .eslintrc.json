@@ -19,7 +19,8 @@
     "no-undef": "off",
     "import/no-useless-path-segments": "off",
     "node/no-unsupported-features/es-syntax": "off",
-    "import/no-extraneous-dependencies": "off"
+    "import/no-extraneous-dependencies": "off",
+    "arrow-body-style": "off"
 
     // let it be like that for now
   }
