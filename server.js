@@ -1,5 +1,6 @@
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const portfinder = require('portfinder');
 dotenv.config({ path: './config.env' }); // this will read the env_variables from the file and import it to the node.js env
 
 const app = require('./app');
@@ -24,7 +25,18 @@ mongoose
   });
 
 // server
-const port = 8000;
-app.listen(port, () => {
-  console.log(`App is running on port ${port}`);
-});
+// const port = 300;
+// app.listen(port, () => {
+//   console.log(`App is running on port ${port}`);
+// });
+portfinder
+  .getPortPromise()
+  .then((port) => {
+    // Start the server on the dynamically assigned port
+    app.listen(port, () => {
+      console.log(`App is running on port ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Error finding an available port:', err);
+  });
