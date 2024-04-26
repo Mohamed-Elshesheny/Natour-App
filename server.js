@@ -25,18 +25,25 @@ mongoose
   });
 
 // server
-const port = 8083;
-app.listen(port, () => {
-  console.log(`App is running on port ${port}`);
+// const port = 8084;
+// app.listen(port, () => {
+//   console.log(`App is running on port ${port}`);
+// });
+portfinder
+  .getPortPromise()
+  .then((port) => {
+    // Start the server on the dynamically assigned port
+    app.listen(port, () => {
+      console.log(`App is running on port ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Error finding an available port:', err);
+  });
+
+process.on('unhandledRejection', (err) => {
+  // احسن من  انهي اعمل catch علشان مش هعرف اعمل catch علي كل حاجه ف الداتا بيز
+  console.log(err.name, err.message); // الي احنا عاملينو دا يعتبر جلوبال ايروو هاندلينج خارج اكسبريس
+  console.log('UNHANDLED REJECTION: Shutting Down..!');
+  process.exit(1);
 });
-// portfinder
-//   .getPortPromise()
-//   .then((port) => {
-//     // Start the server on the dynamically assigned port
-//     app.listen(port, () => {
-//       console.log(`App is running on port ${port}`);
-//     });
-//   })
-//   .catch((err) => {
-//     console.error('Error finding an available port:', err);
-//   });

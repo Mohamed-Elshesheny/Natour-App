@@ -13,6 +13,12 @@ const handleDuplicateFields = (err) => {
   return new AppError(message, 400);
 };
 
+const handleValidatorError = (err) => {
+  const error = Object.values(err.errors).map((el) => el.message);
+  const message = `Invaild Input Data :( The error is ${error}`;
+  return new AppError(message, 404);
+};
+
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -34,7 +40,7 @@ const sendErrorProd = (err, res) => {
     res.status(err.statusCode).json({
       //status code is always 500
       status: err.status, //status is always "error"
-      message: `There was an error, it's a problem from the server side! :(: /n The error is ${err}`,
+      message: err.message,
     });
   }
 };
@@ -45,8 +51,9 @@ module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') sendErrorDev(err, res);
   else if (process.env.NODE_ENV === 'production') {
     let error = Object.create(err);
-    if (err.name === 'CastError') error = handleCastErrorDB(err);
-    if (err.code === 11000) error = handleDuplicateFields(err);
+    if (error.name === 'CastError') error = handleCastErrorDB(error);
+    if (error.code === 11000) error = handleDuplicateFields(error);
+    if (error.name === 'ValidatorError') error = handleValidatorError(error);
     sendErrorProd(error, res);
     //sendErrorProd(error, res);
   }
