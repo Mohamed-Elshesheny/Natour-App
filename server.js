@@ -1,13 +1,13 @@
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const portfinder = require('portfinder');
-dotenv.config({ path: './config.env' }); // this will read the env_variables from the file and import it to the node.js env
 
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
   console.log(err.name, err.message);
   process.exit(1);
 });
+dotenv.config({ path: './config.env' }); // this will read the env_variables from the file and import it to the node.js env
 
 const app = require('./app');
 
