@@ -3,6 +3,12 @@ const mongoose = require('mongoose');
 const portfinder = require('portfinder');
 dotenv.config({ path: './config.env' }); // this will read the env_variables from the file and import it to the node.js env
 
+process.on('uncaughtException', (err) => {
+  console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+  console.log(err.name, err.message);
+  process.exit(1);
+});
+
 const app = require('./app');
 
 const DB = process.env.DATABASE.replace(
@@ -19,21 +25,20 @@ mongoose
     useFindAndModify: false,
     useUnifiedTopology: true,
   })
-  .then(() => console.log('DB conections is successfully'))
-  .catch((err) => {
-    console.error('Error connecting to MongoDB:', err.message);
-  });
+  .then(() => console.log('DB conections is successfully'));
 
 // server
 // const port = 8084;
 // app.listen(port, () => {
 //   console.log(`App is running on port ${port}`);
 // });
+
+let server;
 portfinder
   .getPortPromise()
   .then((port) => {
     // Start the server on the dynamically assigned port
-    app.listen(port, () => {
+    server = app.listen(port, () => {
       console.log(`App is running on port ${port}`);
     });
   })
@@ -42,8 +47,9 @@ portfinder
   });
 
 process.on('unhandledRejection', (err) => {
-  // احسن من  انهي اعمل catch علشان مش هعرف اعمل catch علي كل حاجه ف الداتا بيز
-  console.log(err.name, err.message); // الي احنا عاملينو دا يعتبر جلوبال ايروو هاندلينج خارج اكسبريس
-  console.log('UNHANDLED REJECTION: Shutting Down..!');
-  process.exit(1);
+  console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
 });
