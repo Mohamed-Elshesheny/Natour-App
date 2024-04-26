@@ -25,18 +25,18 @@ mongoose
   });
 
 // server
-// const port = 300;
-// app.listen(port, () => {
-//   console.log(`App is running on port ${port}`);
-// });
-portfinder
-  .getPortPromise()
-  .then((port) => {
-    // Start the server on the dynamically assigned port
-    app.listen(port, () => {
-      console.log(`App is running on port ${port}`);
-    });
-  })
-  .catch((err) => {
-    console.error('Error finding an available port:', err);
-  });
+const port = 8083;
+app.listen(port, () => {
+  console.log(`App is running on port ${port}`);
+});
+// portfinder
+//   .getPortPromise()
+//   .then((port) => {
+//     // Start the server on the dynamically assigned port
+//     app.listen(port, () => {
+//       console.log(`App is running on port ${port}`);
+//     });
+//   })
+//   .catch((err) => {
+//     console.error('Error finding an available port:', err);
+//   });

@@ -32,17 +32,13 @@ exports.getAlltours = catchAsync(async (req, res, next) => {
   });
 });
 exports.getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id, () => {
-    return next(new AppError('No tour found with that ID', 404));
+  const tour = await Tour.findById(req.params.id, (err) => {
+    if (err) return next(new AppError('No tour found with that ID', 404));
   }); //Mongoose has a second parameter for the findById method that is a callback for when the search fails
 
   // this findbyid to find a sepecific tour by his id
   // Tour.findOne({ _id:req.params.id}) this will do the same work up there
   // the propaperty we search for and the value of it
-
-  // if (!tour) {
-  //   return next(new AppError('No tour found with that ID', 404));
-  // }
 
   res.status(200).json({
     status: 'success',
@@ -67,17 +63,13 @@ exports.createTour = catchAsync(async (req, res, next) => {
 // we can not send two responses....
 
 exports.UpdateTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    {
-      new: true,
-      runValidators: true,
-    },
-    () => {
-      return next(new AppError('No tour found with that ID', 404));
-    },
-  );
+  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!tour) {
+    return next(new AppError('No tour found with that ID', 404));
+  }
 
   res.status(200).json({
     status: 'succes',
@@ -88,8 +80,8 @@ exports.UpdateTour = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteTour = catchAsync(async (req, res, next) => {
-  await Tour.findByIdAndDelete(req.params.id, () => {
-    return next(new AppError('No tour found with that ID', 404));
+  await Tour.findByIdAndDelete(req.params.id, (err) => {
+    if (err) return next(new AppError('No tour found with that ID', 404));
   });
 
   res.status(204).json({
