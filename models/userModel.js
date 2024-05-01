@@ -51,7 +51,7 @@ userSchema.methods.correctPassword = async function (
   candiatePassword,
   userPassword,
 ) {
-  return bcrypt.compare(candiatePassword, userPassword); // اول خانه دا الباص الي اليوزر هيدخلو التاني الباص الي ف الداتا
+  return await bcrypt.compare(candiatePassword, userPassword); // اول خانه دا الباص الي اليوزر هيدخلو التاني الباص الي ف الداتا
 };
 
 const User = mongoose.model('User', userSchema);

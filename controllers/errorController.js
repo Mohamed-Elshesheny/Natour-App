@@ -16,7 +16,7 @@ const handleDuplicateFields = (err) => {
 const handleValidatorError = (err) => {
   const error = Object.values(err.errors).map((el) => el.message);
   const message = `Invaild Input Data :( The error is ${error}`;
-  return new AppError(message, 404);
+  return new AppError(message, 400);
 };
 
 const sendErrorDev = (err, res) => {
@@ -46,6 +46,9 @@ const sendErrorProd = (err, res) => {
 };
 
 module.exports = (err, req, res, next) => {
+  //console.log(err);
+  console.log(err.statusCode);
+
   err.statusCode = err.statusCode || 500; //500 because of mongoose or something else. (unknown)
   err.status = err.status || 'error';
   if (process.env.NODE_ENV === 'development') sendErrorDev(err, res);

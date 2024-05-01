@@ -1,7 +1,8 @@
+const catchAsync = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const User = require('./../models/userModel');
-const catchAsync = require('express-async-handler');
 const AppError = require('./../utils/appError');
+
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -34,14 +35,14 @@ exports.login = catchAsync(async (req, res, next) => {
 
   //1) Check if email and password is correct [بيشوف انت حطيت اميل وباص ولا لا اصلا ف الاول ويخش علي المرحله الي بعدها ]
   if (!email || !password) {
-    return next(new AppError('Please provide email and password'), 400);
+    return next(new AppError('Please provide email and password', 400));
   }
   //2) Check if user exists and password is correct [بيشوف لو الايميل متسجل اصلا والباص صح ]
   const user = await User.findOne({ email }).select('+password'); // we do the select casue we made password hidden in the db
-
+  console.log('AHAMED');
   // if the didn't find user so he won't run the next code to check the password
   if (!user || !(await user.correctPassword(password, user.password))) {
-    return next(new AppError('Invaild email or password'), 401);
+    return next(new AppError('Invaild email or password', 401));
   }
   //3) If everything is okay send token to clinet [كلو تمام خلاص دخلو وابعت التوكين انو vaild ]
   const token = signToken(user._id);
