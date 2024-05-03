@@ -1,5 +1,6 @@
 const express = require('express');
 const tourController = require('./../controllers/tourController'); // هنا في tourController هي عباره عن كل الحاجات الي اتعملها exports ف الفايل التاني
+const authController = require('./../controllers/authController');
 
 const Router = express.Router();
 
@@ -16,7 +17,7 @@ Router.route('/tour-stats').get(tourController.getTourStats);
 Router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
 
 Router.route('/')
-  .get(tourController.getAlltours)
+  .get(authController.protect, tourController.getAlltours)
   .post(tourController.createTour); // this will checkbody first then it will create the body if not true it will return 400
 
 Router.route('/:id')

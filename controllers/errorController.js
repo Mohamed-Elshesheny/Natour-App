@@ -13,6 +13,12 @@ const handleDuplicateFields = (err) => {
   return new AppError(message, 400);
 };
 
+const handleJWTError = () =>
+  new AppError('Invalid token, Please login again!', 401);
+
+const handleTokenExpiredError = () =>
+  new AppError('The token has been expierd !', 401);
+
 const handleValidatorError = (err) => {
   const error = Object.values(err.errors).map((el) => el.message);
   const message = `Invaild Input Data :( The error is ${error}`;
@@ -58,6 +64,8 @@ module.exports = (err, req, res, next) => {
     if (error.code === 11000) error = handleDuplicateFields(error);
     if (error.name === 'ValidatorError') error = handleValidatorError(error);
     sendErrorProd(error, res);
+    if (error.name === 'JsonWebTokenError') error = handleJWTError();
+    if (error.name === 'TokenExpiredError') error = handleTokenExpiredError();
     //sendErrorProd(error, res);
   }
 };

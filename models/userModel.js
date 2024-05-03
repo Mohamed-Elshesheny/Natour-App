@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const { parse } = require('dotenv');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -36,6 +37,7 @@ const userSchema = new mongoose.Schema({
       message: 'The passwords are not the same',
     },
   },
+  passwordChangedAt: Date,
 });
 
 userSchema.pre('save', async function (next) {
@@ -52,6 +54,23 @@ userSchema.methods.correctPassword = async function (
   userPassword,
 ) {
   return await bcrypt.compare(candiatePassword, userPassword); // اول خانه دا الباص الي اليوزر هيدخلو التاني الباص الي ف الداتا
+  // await bcrypt.compare(candiatePassword, userPassword).then(() => {
+  //   console.log('The pass word is right');
+  // });
+};
+
+userSchema.methods.ChangedPasswordAfter = function (JWTTimestamp) {
+  // timestamp is a date when the token was issued
+  if (this.passwordChangedAt) {
+    const ChangedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10,
+    );
+    console.log(ChangedTimestamp, JWTTimestamp);
+    return JWTTimestamp < ChangedTimestamp; // it means that the password was changed
+  }
+  // false means that password NOT changed
+  return false;
 };
 
 const User = mongoose.model('User', userSchema);
