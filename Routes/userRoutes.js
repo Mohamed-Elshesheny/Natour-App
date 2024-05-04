@@ -12,6 +12,7 @@ Router.param('id', (req, res, next, val) => {
 
 Router.post('/signup', authController.signup);
 Router.post('/login', authController.login);
+Router.post('/forgetPassword', authController.forgetPassword);
 
 Router.route('/')
   .get(userController.getAllusers)

@@ -19,6 +19,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordconfirm: req.body.passwordconfirm,
     passwordChangedAt: req.body.passwordChangedAt,
+    role: req.body.role,
   });
 
   const token = signToken(newUser._id);
@@ -87,7 +88,42 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // 4) Check if user changed the password after the token was issued
   if (FreshUser.ChangedPasswordAfter(accessToken.iat)) {
-    return next(new AppError('The user recently changed the password !'));
+    //  this will run if [ChangedPasswordAfter] returns TRUE
+    return next(
+      new AppError(
+        'The user recently changed the password! please log in again',
+        401,
+      ),
+    );
   }
+
+  // GRANT ACCESS TO PROTACTED ROUTES
+  req.user = FreshUser;
   next();
+});
+
+exports.restricTo = (...roles) => {
+  // roles is an array of ['admin','lead-guide'] return is the middleware fun
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      // فكره تانيه: انو هيدخل الدور بتاع المستخدم دا لو مش موجود داخل ال الادوار بالتالي ملوش صلاحيه
+      // ياعني بيقول لو مفيش في الي ال arrary ادمن او ليد جايد يبقي مينفعش ياخد الاذن
+      return next(
+        new AppError('You do not have permission to perform this!', 403),
+      );
+    }
+    next();
+  };
+};
+
+exports.forgetPassword = catchAsync(async (req, res, next) => {
+  // 1) Get user based on POSTed email
+  const user = await User.findOne({ email: req.body.email }); // مش هنعمل فايند باي اي دي علشان اليوزر ميعرفش ال اي دي بتاعو اصلا ولكن عارف اليوزر
+  if (!user) {
+    return next(new AppError('There is no user with that email address!', 404));
+  }
+
+  // 2) Generate the random reset token
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
 });

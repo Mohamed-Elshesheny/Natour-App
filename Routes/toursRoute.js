@@ -23,6 +23,10 @@ Router.route('/')
 Router.route('/:id')
   .get(tourController.getTour) // tourController.gettour علشان نخلي الفانكشن الي احنا عملناها تسمع ف الحاجات دي
   .patch(tourController.UpdateTour)
-  .delete(tourController.deleteTour);
+  .delete(
+    authController.protect,
+    authController.restricTo('admin', 'lead-guide'),
+    tourController.deleteTour,
+  );
 
 module.exports = Router;
