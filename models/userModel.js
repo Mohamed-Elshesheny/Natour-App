@@ -57,6 +57,12 @@ userSchema.pre('save', async function (next) {
   this.passwordconfirm = undefined;
 });
 
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next(); // Here if the pass isn't modified or if it's new we will go to the next middleware
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
 userSchema.methods.correctPassword = async function (
   candiatePassword,
   userPassword,
@@ -83,13 +89,15 @@ userSchema.methods.ChangedPasswordAfter = function (JWTTimestamp) {
 userSchema.methods.createPasswordResetToken = function () {
   // لما الداله دي بتستدعي بيعمل ريسيت توكين علشان الباص
   const resetToken = crypto.randomBytes(32).toString('hex'); // it's a random token
+  // This is what the user will get in the email
 
   this.passwordResetToken = crypto // it's the resetToken but it's crypted
-    .createHash('sha256')
+    .createHash('sha256') // This is the crypted version of resetToken to store it in the DB away from hackers
     .update(resetToken)
     .digest('hex');
 
   this.passwordResetExpired = Date.now() + 10 * 60 * 1000;
+  //console.log({ resetToken }, this.passwordResetToken);
 
   return resetToken;
 };
