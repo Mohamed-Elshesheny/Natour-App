@@ -3,6 +3,8 @@ const catchAsync = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const User = require('./../models/userModel');
 const AppError = require('./../utils/appError');
+const sendEmail = require('./../utils/email');
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -126,4 +128,34 @@ exports.forgetPassword = catchAsync(async (req, res, next) => {
   // 2) Generate the random reset token
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
+  console.log('sheno');
+
+  const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
+  const message = `Forgot your password? Submit a PATCH request with your new password
+  and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
+
+  // 3) Send it to user's email
+  try {
+    await sendEmail({
+      email: req.body.email,
+      subject: 'Your password reset token (valid for 10 min)',
+      message,
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Token sent to email',
+    });
+  } catch (err) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpired = undefined;
+    await user.save({ validateBeforeSave: false });
+    console.log(err);
+
+    return next(
+      new AppError('There an error sending the email try again later!', 500),
+    );
+  }
 });
+
+exports.resetPassword = (req, res, next) => {};

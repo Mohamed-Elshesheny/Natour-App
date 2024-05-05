@@ -81,6 +81,7 @@ userSchema.methods.ChangedPasswordAfter = function (JWTTimestamp) {
 };
 
 userSchema.methods.createPasswordResetToken = function () {
+  // لما الداله دي بتستدعي بيعمل ريسيت توكين علشان الباص
   const resetToken = crypto.randomBytes(32).toString('hex'); // it's a random token
 
   this.passwordResetToken = crypto // it's the resetToken but it's crypted
