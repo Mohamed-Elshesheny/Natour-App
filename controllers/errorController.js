@@ -52,7 +52,7 @@ const sendErrorProd = (err, res) => {
 };
 
 module.exports = (err, req, res, next) => {
-  //console.log(err);
+  // console.log(err);
   console.log(err.statusCode);
 
   err.statusCode = err.statusCode || 500; //500 because of mongoose or something else. (unknown)

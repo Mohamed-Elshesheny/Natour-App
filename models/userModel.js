@@ -46,6 +46,11 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpired: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
 });
 
 userSchema.pre('save', async function (next) {
@@ -60,6 +65,14 @@ userSchema.pre('save', async function (next) {
 userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next(); // Here if the pass isn't modified or if it's new we will go to the next middleware
   this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+userSchema.pre(/^find/, function (next) {
+  // Query Middleware
+  // This points to the current query
+  // هنا هو عاوز لما نعمل كويري لي الداتا بيز ميظهرش اليوزرز الي هما ان اكتيف
+  this.find({ active: { $ne: false } }); // means "find documents or rows where the active field is not equal to false"
   next();
 });
 
