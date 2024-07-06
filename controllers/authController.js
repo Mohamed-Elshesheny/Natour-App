@@ -17,6 +17,21 @@ const signToken = (id) => {
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
 
+  const cookieOptions = {
+    expires: new Date( // بعمل كدا لما اجي اعرف تاريخ جديد احنا عاوزين ينتهي في خلال ٩٠ يوم من الوقت الحالي
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+    ),
+    // This will only work in production in a real browser
+    // secure: true, // Theo cookie will only be sent in encrypted conction [https-only]
+    httpOnly: true, // The cookie can't be accsse with any way only with [http]
+  };
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  res.cookie('jwt', token, cookieOptions);
+
+  // Removes the password from the output
+  user.password = undefined;
+
   res.status(statusCode).json({
     status: 'success',
     token,
@@ -63,7 +78,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   let token;
 
   if (
-    req.headers.authorization &&
+    req.headers.authorization && // HTTP headers are additional pieces of information sent along with an HTTP request
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1]; // هنا علشان ناخد الجزء بتاع التوكين بس من غير bearer وحطيناها في arrary

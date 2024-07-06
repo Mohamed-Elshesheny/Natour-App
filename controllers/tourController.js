@@ -31,14 +31,13 @@ exports.getAlltours = catchAsync(async (req, res, next) => {
     },
   });
 });
-exports.getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id, (err) => {
-    if (err) return next(new AppError('No tour found with that ID', 404));
-  }); //Mongoose has a second parameter for the findById method that is a callback for when the search fails
 
-  // this findbyid to find a sepecific tour by his id
-  // Tour.findOne({ _id:req.params.id}) this will do the same work up there
-  // the propaperty we search for and the value of it
+exports.getTour = catchAsync(async (req, res, next) => {
+  const tour = await Tour.findById(req.params.id);
+
+  if (!tour) {
+    next(new AppError('No tour found with that ID', 404));
+  }
 
   res.status(200).json({
     status: 'success',
@@ -46,8 +45,6 @@ exports.getTour = catchAsync(async (req, res, next) => {
       tour,
     },
   });
-
-  // find() it is a bulit in fun in js to loop in the array to find an element and then create an array with this element.
 });
 
 exports.createTour = catchAsync(async (req, res, next) => {
