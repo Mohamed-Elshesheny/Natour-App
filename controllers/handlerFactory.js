@@ -1,4 +1,4 @@
-const { Model } = require('mongoose');
+const { Model, model } = require('mongoose');
 const AppError = require('../utils/appError');
 const catchAsync = require('express-async-handler');
 
@@ -28,6 +28,18 @@ exports.updateOne = (Model) =>
 
     res.status(200).json({
       status: 'success',
+      data: {
+        data: doc,
+      },
+    });
+  });
+
+exports.createOne = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const doc = await Model.create(req.body);
+
+    res.status(201).json({
+      status: 'succes',
       data: {
         data: doc,
       },

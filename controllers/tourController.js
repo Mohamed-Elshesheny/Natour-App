@@ -48,18 +48,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createTour = catchAsync(async (req, res, next) => {
-  const newTour = await Tour.create(req.body);
-
-  res.status(201).json({
-    status: 'succes',
-    data: {
-      tours: newTour,
-    },
-  });
-});
-// we can not send two responses....
-
+exports.createTour = factory.createOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
 exports.updateTour = factory.updateOne(Tour);
 
