@@ -14,8 +14,7 @@ Router.route('/')
     reviewController.createReview,
   );
 
-Router.route('/:id')
-  .delete(reviewController.deleteReview)
-  .patch(reviewController.updateReview);
+Router.route('/:id').delete(reviewController.deleteReview);
+//.patch(reviewController.updateReview);
 
 module.exports = Router;
