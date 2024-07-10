@@ -1,6 +1,7 @@
 const catchAsync = require('express-async-handler');
 const User = require('./../models/userModel');
 const AppError = require('./../utils/appError');
+const factory = require('./handlerFactory');
 
 const filterObj = (obj, ...allowedfields) => {
   //The purpose of this function is to create a new object that contains only the properties specified
@@ -85,16 +86,5 @@ exports.createuser = (req, res) => {
   });
 };
 
-exports.updateuser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    massage: 'This route is not yet defined..!',
-  });
-};
-
-exports.deleteuser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    massage: 'This route is not yet defined..!',
-  });
-};
+exports.updateUser = factory.updateOne(User);
+exports.deleteUser = factory.deleteOne(User);

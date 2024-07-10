@@ -3,6 +3,7 @@ const Tour = require('./../models/tourModel');
 const APIfeatures = require('./../utils/apiFeatures');
 //const catchAsync = require('./../utils/catchAsync');
 const catchAsync = require('express-async-handler');
+const factory = require('./handlerFactory');
 
 exports.aliasTopTour = (req, res, next) => {
   req.query.limit = '5';
@@ -33,7 +34,7 @@ exports.getAlltours = catchAsync(async (req, res, next) => {
 });
 
 exports.getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id);
+  const tour = await Tour.findById(req.params.id).populate('Reviews');
 
   if (!tour) {
     next(new AppError('No tour found with that ID', 404));
@@ -59,33 +60,19 @@ exports.createTour = catchAsync(async (req, res, next) => {
 });
 // we can not send two responses....
 
-exports.UpdateTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
+exports.deleteTour = factory.deleteOne(Tour);
+exports.updateTour = factory.updateOne(Tour);
 
-  res.status(200).json({
-    status: 'succes',
-    data: {
-      tour,
-    },
-  });
-});
+// exports.deleteTour = catchAsync(async (req, res, next) => {
+//   await Tour.findByIdAndDelete(req.params.id, (err) => {
+//     if (err) return next(new AppError('No tour found with that ID', 404));
+//   });
 
-exports.deleteTour = catchAsync(async (req, res, next) => {
-  await Tour.findByIdAndDelete(req.params.id, (err) => {
-    if (err) return next(new AppError('No tour found with that ID', 404));
-  });
-
-  res.status(204).json({
-    status: 'succes',
-    data: null,
-  });
-});
+//   res.status(204).json({
+//     status: 'succes',
+//     data: null,
+//   });
+// });
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([

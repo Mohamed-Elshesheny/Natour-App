@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
+const Review = require('./reviewModel');
 //const user = require('./userModel');
 
 const tourSchema = new mongoose.Schema(
@@ -121,6 +122,15 @@ const tourSchema = new mongoose.Schema(
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7; // assuming duration is in days, dividing by 7 to get weeks
+});
+
+// Virtual Populate
+tourSchema.virtual('Reviews', {
+  //The ref option, which tells Mongoose which model to populate documents from.
+  //The localField and foreignField options. Mongoose will populate documents from the model in ref whose foreignField matches this document's localField.
+  ref: Review,
+  foreignField: 'tour',
+  localField: '_id',
 });
 
 //Document Middleware: runs before .save and . create - this middleware is gonna run berfore the actual event

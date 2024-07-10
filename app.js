@@ -9,6 +9,7 @@ const AppError = require('./utils/appError');
 const GlobalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./Routes/toursRoute');
 const userRouter = require('./Routes/userRoutes');
+const reviewRouter = require('./Routes/reviewRoute');
 const helemt = require('helmet');
 
 const app = express();
@@ -76,6 +77,7 @@ app.use((req, res, next) => {
 // Routes all of these routes handlers from express package
 app.use('/api/v1/tours', tourRouter); // This route runs first cause it's in the midddleware queue
 app.use('/api/v1/users', userRouter); // And if the route isn't right he will run the app.all
+app.use('/api/v1/review', reviewRouter);
 
 app.all('*', (req, res, next) => {
   // url error handler
