@@ -10,6 +10,7 @@ Router.route('/')
   .post(
     authController.protect,
     authController.restricTo('user', 'admin'),
+    reviewController.SetTourUserId,
     reviewController.createReview,
   );
 
