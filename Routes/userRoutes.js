@@ -11,20 +11,23 @@ Router.post('/signup', authController.signup);
 Router.post('/login', authController.login);
 Router.post('/forgetPassword', authController.forgetPassword);
 Router.patch('/resetPassword/:token', authController.resetPassword);
-Router.patch(
-  '/updatePassword',
-  authController.protect,
-  authController.updatePassword,
-);
 
-Router.delete('/deleteMe', authController.protect, userController.deleteMe);
-Router.patch('/updateMe', authController.protect, userController.updateMe);
+// This middle-ware will use the protect fun for all the remaining routes
+Router.use(authController.protect);
+
+Router.patch('/updatePassword', authController.updatePassword);
+Router.get('/me', userController.getMe, userController.getUser);
+Router.delete('/deleteMe', userController.deleteMe);
+Router.patch('/updateMe', userController.updateMe);
+
+// The middle-ware to restrict the actions
+Router.use(authController.restricTo('admin'));
 
 Router.route('/').get(userController.getAllusers);
 
 Router.route('/:id')
   .patch(userController.updateUser)
-  .get(userController.getuser)
+  .get(userController.getUser)
   .delete(userController.deleteUser);
 
 module.exports = Router;

@@ -12,25 +12,11 @@ const filterObj = (obj, ...allowedfields) => {
   return newObj;
 };
 
-exports.getAllusers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-
-  // send the response
-  res.status(200).json({
-    status: 'success',
-    requestedAt: req.requestTime,
-    results: users.length,
-    data: {
-      users: users, // in E63 we can have key-value withot '' if they have the same name...
-    },
-  });
-  // res.status(200).json({
-  //   status:'success',
-  //   data:{
-
-  //   }
-  // })
-});
+// Here we made a middleware to save the current user ID
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // this only for update data not update passowrd
@@ -72,12 +58,7 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getuser = (req, res) => {
-  res.status(500).json({
-    status: 'success',
-    message: 'This route is not yet',
-  });
-};
-
+exports.getAllusers = factory.getAll(User);
+exports.getUser = factory.getOne(User);
 exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);

@@ -18,15 +18,27 @@ Router.route('/Top-5-cheap').get(
 );
 
 Router.route('/tour-stats').get(tourController.getTourStats);
-Router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
+Router.route('/monthly-plan/:year').get(
+  authController.protect,
+  authController.restricTo('admin', 'lead-guide', 'guide'),
+  tourController.getMonthlyPlan,
+);
 
 Router.route('/')
-  .get(authController.protect, tourController.getAlltours)
-  .post(tourController.createTour); // this will checkbody first then it will create the body if not true it will return 400
+  .get(tourController.getAlltours)
+  .post(
+    authController.protect,
+    authController.restricTo('admin', 'lead-guide'),
+    tourController.createTour,
+  ); // this will checkbody first then it will create the body if not true it will return 400
 
 Router.route('/:id')
   .get(tourController.getTour) // tourController.gettour علشان نخلي الفانكشن الي احنا عملناها تسمع ف الحاجات دي
-  .patch(tourController.updateTour)
+  .patch(
+    authController.protect,
+    authController.restricTo('admin', 'lead-guide'),
+    tourController.updateTour,
+  )
   .delete(
     authController.protect,
     authController.restricTo('admin', 'lead-guide'),
