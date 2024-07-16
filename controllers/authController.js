@@ -16,6 +16,7 @@ const signToken = (id) => {
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
+  console.log(`Token generated for user: ${user.name}, Role: ${user.role}`); // Log user role
 
   const cookieOptions = {
     expires: new Date( // بعمل كدا لما اجي اعرف تاريخ جديد احنا عاوزين ينتهي في خلال ٩٠ يوم من الوقت الحالي
