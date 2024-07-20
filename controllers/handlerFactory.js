@@ -75,6 +75,8 @@ exports.getAll = (Model) =>
       .sort()
       .limitFields()
       .pagination();
+    //const doc = await features.query.explain();
+    // console.log(req.query.review);
     const doc = await features.query;
 
     // send the response
